@@ -130,7 +130,6 @@ ax.set_ylabel('tide level [m]')
 ax.set_ylim(SDS_slope.get_min_max(tide_fes))
 
 # Option 2. otherwise load tide levels associated with "dates_sat" from a file
-# tide_data = {'dates':dates_sat,'tide':tide_sat}
 # with open(os.path.join('example_data', sitename + '_tide' + '.pkl'), 'rb') as f:
 #     tide_data = pickle.load(f) 
 # tides_sat = tide_data['tide']
