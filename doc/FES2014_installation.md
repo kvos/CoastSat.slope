@@ -11,11 +11,11 @@
 
 
 4. Unzip the folders (twice .xz and .tar) and save both folders (`load_tide`and `ocean_tide`) in your source folder at the following location `fes-2.9.1-Source\data\fes2014\`. After you completed this step, that folder should look like this, with only `load_tide` and `ocean_tide` folders containing 34 .nc files each and the other folders left empty:
-<center><img src="fes2014_folder.jpg" alt="" width="40%"/></center>
+<center><img src="fes2014_folder.JPG" alt="" width="40%"/></center>
 
 
 5. Update the .ini files (`load_tide.ini` and `ocean_tide.ini`) to include for each tidal component the absolute path to the corresponding .nc file (use find and replace to do this). It should look like this:
-<center><img src="ini_file.jpg" alt="" width="100%"/></center>
+<center><img src="ini_file.JPG" alt="" width="100%"/></center>
 
 6. Open the Anaconda prompt and activate your environment, then run: `conda install -c fbriol fes`
 
