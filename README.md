@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3872443.svg)](https://doi.org/10.5281/zenodo.3872443)
+
 # CoastSat.slope
  Beach-face slope estimation from satellite-derived shorelines, extension to the CoastSat toolbox.
 
