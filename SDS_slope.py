@@ -415,7 +415,7 @@ def plot_cross_distance(dates, cross_distance):
         fig.set_tight_layout(True)
         ax.grid(linestyle=':', color='0.5')
         ax.plot(dates_temp, chain - np.mean(chain), '-o', ms=3, mfc='w', mec='C0')
-        ax.set(title='Transect ' + key, ylabel='distance [m]', ylim=get_min_max_dict(cross_distance))
+        ax.set(title='Transect %s - %d points'%(key,len(chain)), ylabel='distance [m]', ylim=get_min_max_dict(cross_distance))
         
 def get_min_max_dict(cross_distance): 
     'get min and max of a dictionary of time-series'
