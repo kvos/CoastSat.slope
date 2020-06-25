@@ -6,7 +6,7 @@
 #### Beach slope estimation from satellites
 This toolkit is an extension of the main [CoastSat toolbox](https://github.com/kvos/CoastSat), it enables users to estimate the beach-face slope from satellite-derived shorelines and associated tide levels.
 
-![](./doc/intro_fig2.jpg)
+![](./doc/intro_fig1.jpg)
 
 The methodology is described in: Vos K., Harley M.D., Splinter K.D., Walker A., Turner I.L. (2019). Beach slopes from satellite-derived shorelines. Geophysical Research Letters. https://doi.org/10.1029/2020GL088365
 
