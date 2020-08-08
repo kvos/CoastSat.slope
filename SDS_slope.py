@@ -136,13 +136,21 @@ def compute_intersection(output, transects, settings):
             contains the X and Y coordinates of the transects (first and last point needed for each
             transect).
         settings: dict
-                along_dist: alongshore distance to caluclate the intersection (median of points
+                along_dist: float
+                alongshore distance to caluclate the intersection (median of points
                 within this distance).
-                nan/max:
-                max_std:
-                max_range:
-                min_val:
-                prc_std:
+                max_std: float
+                if the standard deviation of the points is above this threshold a nan is returned
+                max_range: float
+                if the range of the points is above this threshold a nan is returned                
+                min_val: float
+                largest negative value along transect (landwards of transect origin)
+                nan/max: str
+                'nan', 'max' or 'auto', how to deal with multiple intersections, 
+                either put a nan or take the maximum (most seawards intersection),
+                or automatically decide based on the occurence of multiple intersections
+                (for example if there is a lagoon behind the beach, there are always 2 intersections)
+                prc_std: percentage of occurrence to use in 'auto' mode to switch from 'nan' to 'max'
 
     Returns:
     -----------
