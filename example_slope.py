@@ -132,7 +132,7 @@ ax.set_ylim(SDS_slope.get_min_max(tide_fes))
 # Option 2. otherwise load tide levels associated with "dates_sat" from a file
 # with open(os.path.join('example_data', sitename + '_tide' + '.pkl'), 'rb') as f:
 #     tide_data = pickle.load(f) 
-# tides_sat = tide_data['tide']
+# tide_sat = tide_data['tide']
 
 # plot time-step distribution
 t = np.array([_.timestamp() for _ in dates_sat]).astype('float64')
