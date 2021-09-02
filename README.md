@@ -5,26 +5,26 @@
 
 
 # CoastSat.slope
-#### Beach slope estimation from satellites
+### Beach slope estimation from satellites
 This toolkit enables users to estimate the beach-face slope from satellite-derived shorelines and associated tide levels. As shown below, beach-face slopes can vary drastically for different coastlines. As the horizontal tidal excursion is modulated by this slope, we can capture such modulation with instantaneous satellite-derived shorelines and associated water levels in order to estimate this slope. Here we use [CoastSat](https://github.com/kvos/CoastSat) to map the shorelines and [FES2014](https://www.aviso.altimetry.fr/es/data/products/auxiliary-products/global-tide-fes/description-fes2014.html) to obtain tide levels, but the method could be applied to other data sources.
 
 ![](./doc/intro_fig1.jpg)
 
 **If you like the repo put a star on it!**
-#### Ressources
+### Ressources
 The methodology is described in: Vos K., Harley M.D., Splinter K.D., Walker A., Turner I.L. (2019). Beach slopes from satellite-derived shorelines. Geophysical Research Letters. https://doi.org/10.1029/2020GL088365 (or preprint [here](https://www.essoar.org/doi/10.1002/essoar.10502903.1)). Slides describing the method are also available [here](https://www.slideshare.net/KilianVos/beach-slopes-from-satellite-shorelines-coast2coast-presentation).
 
 You can visit the [CoastSat webGIS page](http://coastsat.wrl.unsw.edu.au/) to explore and download a regional-scale dataset of beach slopes.
 
 In the repo, there are two Jupyter Notebooks showing examples of beach slope estimation along transects at [Cable Beach](https://github.com/kvos/CoastSat.slope/blob/master/example_slope_Cable_beach.ipynb) and [Narrabeen-Collaroy](https://github.com/kvos/CoastSat.slope/blob/master/example_slope_Narrabeen.ipynb), Australia.
 
-#### Installation
+### Installation
 
 To run the examples you will need to install the `coastsat` environment (instructions in the main [CoastSat toolbox](https://github.com/kvos/CoastSat)).
 
 If you want to use [FES2014](https://www.aviso.altimetry.fr/es/data/products/auxiliary-products/global-tide-fes/description-fes2014.html) global tide model to get the tide levels at the time of image acquisition, follow the [instructions](https://github.com/kvos/CoastSat.slope/blob/master/doc/FES2014_installation.md) provided to setup the model.
 
-#### Example
+### Example
 
 The different steps to obtain a beach slope estimate are shown here with an example at Narrabeen-Collaroy.
 
