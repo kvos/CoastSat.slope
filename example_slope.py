@@ -34,7 +34,7 @@ with open(os.path.join('example_data', sitename + '_output' + '.pkl'), 'rb') as 
 geojson_file = os.path.join(os.getcwd(), 'example_data', 'NARRA_transects.geojson')
 transects = SDS_slope.transects_from_geojson(geojson_file)
 
-# remove S2 shorelines (the slope estimation algorithm needs only Landsat)
+# remove S2 shorelines (the slope estimation algorithm works better only with Landsat)
 if 'S2' in output['satname']:
     idx_S2 = np.array([_ == 'S2' for _ in output['satname']])
     for key in output.keys():
@@ -81,20 +81,21 @@ SDS_slope.plot_cross_distance(output['dates'],cross_distance)
 # slope estimation settings
 days_in_year = 365.2425
 seconds_in_day = 24*3600
-settings_slope = {'slope_min':        0.035,
-                  'slope_max':        0.2, 
-                  'delta_slope':      0.005,
+settings_slope = {'slope_min':        0.035,                  # minimum slope to trial
+                  'slope_max':        0.2,                    # maximum slope to trial
+                  'delta_slope':      0.005,                  # resolution of slopes to trial
                   'date_range':       [1999,2020],            # range of dates over which to perform the analysis
                   'n_days':           8,                      # sampling period [days]
                   'n0':               50,                     # for Nyquist criterium
                   'freqs_cutoff':     1./(seconds_in_day*30), # 1 month frequency
-                  'delta_f':          100*1e-10,              # deltaf for buffer around max peak                                           # True to save some plots of the spectrums
+                  'delta_f':          1e-8,                   # deltaf for buffer around max peak
+                  'prc_conf':         0.05,                   # percentage above minimum to define confidence bands in energy curve
                   }
 settings_slope['date_range'] = [pytz.utc.localize(datetime(settings_slope['date_range'][0],5,1)),
                                 pytz.utc.localize(datetime(settings_slope['date_range'][1],1,1))]
 beach_slopes = SDS_slope.range_slopes(settings_slope['slope_min'], settings_slope['slope_max'], settings_slope['delta_slope'])
 
-# clip the dates between 1999 and 2020 as we need at least 2 Landsat satellites 
+# clip the dates between 1999 and 2020 as we need at least 2 Landsat satellites in orbit simultaneously 
 idx_dates = [np.logical_and(_>settings_slope['date_range'][0],_<settings_slope['date_range'][1]) for _ in output['dates']]
 dates_sat = [output['dates'][_] for _ in np.where(idx_dates)[0]]
 for key in cross_distance.keys():
@@ -104,10 +105,9 @@ for key in cross_distance.keys():
     
 # Option 1. if FES2014 global tide model is setup
 import pyfes
-filepath = r'C:\Users\Kilian\OneDrive - UNSW\fes-2.9.1-Source\data\fes2014'
-config_ocean = os.path.join(filepath, 'ocean_tide_Kilian.ini')
-config_ocean_extrap =  os.path.join(filepath, 'ocean_tide_extrapolated_Kilian.ini')
-config_load =  os.path.join(filepath, 'load_tide_Kilian.ini')  
+filepath = r'C:\Users\z5030440\OneDrive - UNSW\fes-2.9.1-Source\data\fes2014'
+config_ocean = os.path.join(filepath, 'ocean_tide.ini')
+config_load =  os.path.join(filepath, 'load_tide.ini')  
 ocean_tide = pyfes.Handler("ocean", "io", config_ocean)
 load_tide = pyfes.Handler("radial", "io", config_load)
 
@@ -150,7 +150,7 @@ settings_slope['freqs_max'] = SDS_slope.find_tide_peak(dates_sat,tide_sat,settin
 
 #%% 4. Estimate beach slopes along the transects
 
-slope_est = dict([])
+slope_est, cis = dict([]), dict([])
 for key in cross_distance.keys():
     # remove NaNs
     idx_nan = np.isnan(cross_distance[key])
@@ -159,6 +159,6 @@ for key in cross_distance.keys():
     composite = cross_distance[key][~idx_nan]
     # apply tidal correction
     tsall = SDS_slope.tide_correct(composite,tide,beach_slopes)
-    SDS_slope.plot_spectrum_all(dates,composite,tsall,settings_slope)
-    slope_est[key] = SDS_slope.integrate_power_spectrum(dates,tsall,settings_slope)
+    SDS_slope.plot_spectrum_all(dates,composite,tsall,settings_slope,key)
+    slope_est[key],cis[key] = SDS_slope.integrate_power_spectrum(dates,tsall,settings_slope)
     print('Beach slope at transect %s: %.3f'%(key, slope_est[key]))

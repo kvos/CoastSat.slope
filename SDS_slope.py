@@ -10,8 +10,11 @@ from matplotlib import colorbar
 from matplotlib import lines
 from scipy import integrate as sintegrate
 from scipy import signal as ssignal
-from astropy.stats import LombScargle
+from scipy import interpolate as sinterpolate
+from astropy.timeseries import LombScargle
 import geopandas as gpd
+import pytz
+from shapely import geometry
 import pdb
 
 # plotting params
@@ -23,72 +26,97 @@ plt.rcParams['axes.titlesize'] = 12
 plt.rcParams['axes.labelsize'] = 12
 plt.rcParams['legend.fontsize'] = 1
 
+###################################################################################################
+# QA for CoastSat shorelines
+###################################################################################################
+    
 def remove_duplicates(output):
     """
-    Function to remove from the output dictionnary entries containing shorelines for the same date
-    and satellite mission. This happens when there is an overlap between adjacent
-    satellite images.
-
+    Function to remove from the output dictionnary entries containing shorelines for 
+    the same date and satellite mission. This happens when there is an overlap 
+    between adjacent satellite images.
+    
+    KV WRL 2020
+    
     Arguments:
     -----------
         output: dict
             contains output dict with shoreline and metadata
-
-    Returns:
+        
+    Returns:    
     -----------
         output_no_duplicates: dict
             contains the updated dict where duplicates have been removed
-
+        
     """
-
-    # nested function
-    def duplicates_dict(lst):
-        "return duplicates and indices"
-        def duplicates(lst, item):
-                return [i for i, x in enumerate(lst) if x == item]
-        return dict((x, duplicates(lst, x)) for x in set(lst) if lst.count(x) > 1)
-
-    dates = output['dates']
-    # make a list with year/month/day
-    dates_str = [_.strftime('%Y%m%d') for _ in dates]
-    # create a dictionnary with the duplicates
-    dupl = duplicates_dict(dates_str)
-    # if there are duplicates, only keep the first element
-    if dupl:
+    # remove duplicates
+    dates = output['dates'].copy()
+    # find the pairs of images that are within 5 minutes of each other
+    time_delta = 5*60 # 5 minutes in seconds
+    pairs = []
+    for i,date in enumerate(dates):
+        # dummy value so it does not match it again
+        dates[i] = pytz.utc.localize(datetime(1,1,1) + timedelta(days=i+1))
+        # calculate time difference
+        time_diff = np.array([np.abs((date - _).total_seconds()) for _ in dates])
+        # find the matching times and add to pairs list
+        boolvec = time_diff <= time_delta
+        if np.sum(boolvec) == 0:
+            continue
+        else:
+            idx_dup = np.where(boolvec)[0][0]
+            pairs.append([i,idx_dup])
+            
+    # if there are duplicates, only keep the longest shoreline
+    if len(pairs) > 0:
+        # initialise variables
         output_no_duplicates = dict([])
         idx_remove = []
-        for k,v in dupl.items():
-            idx_remove.append(v[0])
+        # for each pair
+        for pair in pairs:
+            # check if any of the shorelines are empty
+            empty_bool = [(len(output['shorelines'][_]) == 0) for _ in pair]
+            if np.all(empty_bool): # if both empty remove both
+                idx_remove.append(pair[0])
+                idx_remove.append(pair[1])
+            elif np.any(empty_bool): # if one empty remove that one
+                idx_remove.append(pair[np.where(empty_bool)[0][0]])
+            else: # remove the shorter shoreline and keep the longer one
+                sl0 = geometry.LineString(output['shorelines'][pair[0]]) 
+                sl1 = geometry.LineString(output['shorelines'][pair[1]])
+                if sl0.length >= sl1.length: idx_remove.append(pair[1])
+                else: idx_remove.append(pair[0])
+        # create a new output structure with all the duplicates removed
         idx_remove = sorted(idx_remove)
-        idx_all = np.linspace(0, len(dates_str)-1, len(dates_str))
-        idx_keep = list(np.where(~np.isin(idx_all,idx_remove))[0])
+        idx_all = np.linspace(0, len(dates)-1, len(dates)).astype(int)
+        idx_keep = list(np.where(~np.isin(idx_all,idx_remove))[0])        
         for key in output.keys():
             output_no_duplicates[key] = [output[key][i] for i in idx_keep]
         print('%d duplicates' % len(idx_remove))
-        return output_no_duplicates
-    else:
+        return output_no_duplicates 
+    else: 
         print('0 duplicates')
         return output
-
+                
 def remove_inaccurate_georef(output, accuracy):
     """
     Function to remove from the output dictionnary entries containing shorelines that were mapped
     on images with inaccurate georeferencing (RMSE > accuracy or flagged with -1)
-
+    
     Arguments:
     -----------
         output: dict
             contains the extracted shorelines and corresponding metadata
         accuracy: int
-            minimum horizontal georeferencing accuracy (metres) for a shoreline to be accepted
-
-    Returns:
+            minimum horizontal georeferencing accuracy (metres) for a shoreline to be accepted 
+        
+    Returns:    
     -----------
         output_filtered: dict
             contains the updated dictionnary
-
+        
     """
-
+    
     # find indices of shorelines to be removed
     idx = np.where(~np.logical_or(np.array(output['geoaccuracy']) == -1,
                                   np.array(output['geoaccuracy']) >= accuracy))[0]
@@ -423,7 +451,7 @@ def plot_cross_distance(dates, cross_distance):
         fig.set_tight_layout(True)
         ax.grid(linestyle=':', color='0.5')
         ax.plot(dates_temp, chain - np.mean(chain), '-o', ms=3, mfc='w', mec='C0')
-        ax.set(title='Transect %s - %d points'%(key,len(chain)), ylabel='distance [m]', ylim=get_min_max_dict(cross_distance))
+        ax.set(title='%s - %d points'%(key,len(chain)), ylabel='distance [m]', ylim=get_min_max_dict(cross_distance))
 
 def get_min_max_dict(cross_distance):
     'get min and max of a dictionary of time-series'
@@ -640,14 +668,27 @@ def integrate_power_spectrum(dates_rand,tsall,settings):
     t = np.array([_.timestamp() for _ in dates_rand]).astype('float64')
     seconds_in_day = 24*3600
     time_step = settings['n_days']*seconds_in_day
-    freqs = frequency_grid(t,time_step,settings['n0'])
+    freqs = frequency_grid(t,time_step,settings['n0'])    
     beach_slopes = range_slopes(settings['slope_min'], settings['slope_max'], settings['delta_slope'])
     # integrate power spectrum
-    idx_interval = np.logical_and(freqs >= settings['freqs_max'][0], freqs <= settings['freqs_max'][1])
+    idx_interval = np.logical_and(freqs >= settings['freqs_max'][0], freqs <= settings['freqs_max'][1]) 
     E = np.zeros(beach_slopes.size)
     for i in range(len(tsall)):
         ps, _, _ = power_spectrum(t,tsall[i],freqs,[])
         E[i] = sintegrate.simps(ps[idx_interval], x=freqs[idx_interval], even='avg')
+    # calculate confidence interval
+    delta = 0.0001
+    prc = settings['prc_conf']
+    f = sinterpolate.interp1d(beach_slopes, E, kind='linear')
+    beach_slopes_interp = range_slopes(settings['slope_min'],settings['slope_max']-delta,delta)
+    E_interp = f(beach_slopes_interp)
+    # find values below minimum + 5%
+    slopes_min = beach_slopes_interp[np.where(E_interp <= np.min(E)*(1+prc))[0]]
+    if len(slopes_min) > 1:
+        ci = [slopes_min[0],slopes_min[-1]]
+    else:
+        ci = [beach_slopes[np.argmin(E)],beach_slopes[np.argmin(E)]]
+    
     # plot energy vs slope curve
     fig = plt.figure()
     fig.set_size_inches([12,4])
@@ -655,10 +696,20 @@ def integrate_power_spectrum(dates_rand,tsall,settings):
     ax = fig.add_subplot(111)
     ax.grid(linestyle=':', color='0.5')
     ax.set(title='Energy in tidal frequency band', xlabel='slope values',ylabel='energy')
-    ax.plot(beach_slopes,E,'-k',lw=1.5)
+    ax.plot(beach_slopes_interp,E_interp,'-k',lw=1.5)
     cmap = cm.get_cmap('RdYlGn')
     color_list = cmap(np.linspace(0,1,len(beach_slopes)))
     for i in range(len(beach_slopes)): ax.plot(beach_slopes[i], E[i],'o',ms=8,mec='k',mfc=color_list[i,:])
-    ax.plot(beach_slopes[np.argmin(E)],np.min(E),'bo',ms=14,mfc='None',mew=2, label='%.3f'%beach_slopes[np.argmin(E)])
+    ax.plot(beach_slopes[np.argmin(E)],np.min(E),'bo',ms=14,mfc='None',mew=2)
+    ax.text(0.65,0.85,
+            'slope estimate = %.3f\nconf. band = [%.3f , %.3f]'%(beach_slopes[np.argmin(E)],ci[0],ci[1]),
+            transform=ax.transAxes,va='center',ha='left',
+            bbox=dict(boxstyle='round', ec='k',fc='w', alpha=0.5),fontsize=12)
+    ax.axhspan(ymin=np.min(E),ymax=np.min(E)*(1+prc),fc='0.7',alpha=0.5)
+    ybottom = ax.get_ylim()[0]
+    ax.plot([ci[0],ci[0]],[ybottom,f(ci[0])],'k--',lw=1,zorder=0)
+    ax.plot([ci[1],ci[1]],[ybottom,f(ci[1])],'k--',lw=1,zorder=0)
+    ax.plot([ci[0],ci[1]],[ybottom,ybottom],'k--',lw=1,zorder=0)
 
-    return beach_slopes[np.argmin(E)]
+    
+    return beach_slopes[np.argmin(E)], ci

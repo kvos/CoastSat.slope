@@ -2,10 +2,10 @@
 "type": "FeatureCollection",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::28351" } },
 "features": [
-{ "type": "Feature", "properties": { "name": "1" }, "geometry": { "type": "LineString", "coordinates": [ [ 415275.244972613116261, 8013500.687167692929506 ], [ 414215.711124428198673, 8014190.736914103850722 ] ] } },
-{ "type": "Feature", "properties": { "name": "2" }, "geometry": { "type": "LineString", "coordinates": [ [ 416242.732254508882761, 8014923.914769665338099 ], [ 415006.393125523522031, 8015570.836406924761832 ] ] } },
-{ "type": "Feature", "properties": { "name": "3" }, "geometry": { "type": "LineString", "coordinates": [ [ 416717.141455166100059, 8017195.328518265858293 ], [ 415437.674217030056752, 8017238.456627416424453 ] ] } },
-{ "type": "Feature", "properties": { "name": "4" }, "geometry": { "type": "LineString", "coordinates": [ [ 416817.773709850967862, 8019265.477757497690618 ], [ 415595.810617249109782, 8019409.238121332600713 ] ] } },
-{ "type": "Feature", "properties": { "name": "5" }, "geometry": { "type": "LineString", "coordinates": [ [ 417019.03821922064526, 8021508.139433331787586 ], [ 415854.579272153030615, 8021651.899797166697681 ] ] } }
+{ "type": "Feature", "properties": { "name": "Transect 1" }, "geometry": { "type": "LineString", "coordinates": [ [ 415275.244972613116261, 8013500.687167692929506 ], [ 414215.711124428198673, 8014190.736914103850722 ] ] } },
+{ "type": "Feature", "properties": { "name": "Transect 2" }, "geometry": { "type": "LineString", "coordinates": [ [ 416242.732254508882761, 8014923.914769665338099 ], [ 415006.393125523522031, 8015570.836406924761832 ] ] } },
+{ "type": "Feature", "properties": { "name": "Transect 3" }, "geometry": { "type": "LineString", "coordinates": [ [ 416717.141455166100059, 8017195.328518265858293 ], [ 415437.674217030056752, 8017238.456627416424453 ] ] } },
+{ "type": "Feature", "properties": { "name": "Transect 4" }, "geometry": { "type": "LineString", "coordinates": [ [ 416817.773709850967862, 8019265.477757497690618 ], [ 415595.810617249109782, 8019409.238121332600713 ] ] } },
+{ "type": "Feature", "properties": { "name": "Transect 5" }, "geometry": { "type": "LineString", "coordinates": [ [ 417019.03821922064526, 8021508.139433331787586 ], [ 415854.579272153030615, 8021651.899797166697681 ] ] } }
 ]
 }
