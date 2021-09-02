@@ -6,7 +6,7 @@
 
 # CoastSat.slope
 #### Beach slope estimation from satellites
-This toolkit enables users to estimate the beach-face slope from satellite-derived shorelines and associated tide levels. As shown below, beach-face slopes can vary drastically for different coastlines. As the horizontal tidal excursion is modulated by this slope, we can capture such modulation with instantaneous satellite-derived shorelines and associated water levels and estimate this slope. Here we use [CoastSat](https://github.com/kvos/CoastSat) to map the shorelines and [FES2014](https://www.aviso.altimetry.fr/es/data/products/auxiliary-products/global-tide-fes/description-fes2014.html) to obtain tide levels, but the method could be applied to other data sources.
+This toolkit enables users to estimate the beach-face slope from satellite-derived shorelines and associated tide levels. As shown below, beach-face slopes can vary drastically for different coastlines. As the horizontal tidal excursion is modulated by this slope, we can capture such modulation with instantaneous satellite-derived shorelines and associated water levels in order to estimate this slope. Here we use [CoastSat](https://github.com/kvos/CoastSat) to map the shorelines and [FES2014](https://www.aviso.altimetry.fr/es/data/products/auxiliary-products/global-tide-fes/description-fes2014.html) to obtain tide levels, but the method could be applied to other data sources.
 
 ![](./doc/intro_fig1.jpg)
 
