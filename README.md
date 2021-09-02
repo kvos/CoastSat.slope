@@ -28,7 +28,7 @@ If you want to use [FES2014](https://www.aviso.altimetry.fr/es/data/products/aux
 
 The different steps to obtain a beach slope estimate are shown here with an example at Narrabeen-Collaroy.
 
-Shorelines were mapped with the [CoastSat toolbox](https://github.com/kvos/CoastSat)) from Landsat 5, Landsat 7 and Landsat 8 images covering the site. These are provided here in the same format as CoastSat outputs them (under `/example_data/NARRA_output.pkl`).
+Shorelines were mapped with the [CoastSat toolbox](https://github.com/kvos/CoastSat) from Landsat 5, Landsat 7 and Landsat 8 images covering the site. These are provided here in the same format as CoastSat outputs them (under `/example_data/NARRA_output.pkl`).
 
 The next step is to compute the intersections between instantaneous shorelines and cross-shore transects to obtain time-series (note that a few outlier removal functions have been added here to make sure that the time-series are clean before using them for slope estimation).
 ![](./doc/shorelines.png)
@@ -46,7 +46,7 @@ The accurcacy of the slope estimates, as demonstrated in the [published work](ht
 ![](./doc/spectrum_Cable5.png)
 ![](./doc/energy_curve_Cable5.png)
 
-I recommend following both Jupyter Notebooks provided here (~10 min each), the [Narrabeen-Collaroy](https://github.com/kvos/CoastSat.slope/blob/master/example_slope_Narrabeen.ipynb) one (tide range of 1.3 m) and the [Cable Beach](https://github.com/kvos/CoastSat.slope/blob/master/example_slope_Cable_beach.ipynb) one (tide range of 8 m) to get a feel for how the power spectrum densities and energy curves behave before running it at your own site. 
+I recommend following both Jupyter Notebooks provided here (~10 min each), the [Narrabeen-Collaroy](https://github.com/kvos/CoastSat.slope/blob/master/example_slope_Narrabeen.ipynb) one (tide range of 1.3 m) and the [Cable Beach](https://github.com/kvos/CoastSat.slope/blob/master/example_slope_Cable_beach.ipynb) one (tide range of 8 m) to get a feel for how the power spectrum densities and energy curves behave before running it at your own site.
 Happy beach slope mapping !
 
 Having a problem? Post an issue in the [Issues page](https://github.com/kvos/CoastSat.slope/issues) (please do not email).
