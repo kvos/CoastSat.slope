@@ -1,6 +1,6 @@
 #### How to install FES2014 on Windows:
 
-1. Download the source folder from Bitbucket: https://bitbucket.org/fbriol/fes/downloads/ - unzip it and store in any preferred location.
+1. Download the source folder from Github: https://github.com/CNES/aviso-fes - unzip it and store in any preferred location.
 
 2. Download the **FES2014 Oceanic Tide Heights** dataset from the [Aviso+ website](https://www.aviso.altimetry.fr/data.html) [accout required].
 <img src="aviso_website.JPG" alt="" width="80%"/>
