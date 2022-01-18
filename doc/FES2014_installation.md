@@ -17,6 +17,6 @@
 5. Update the .ini files (`load_tide.ini` and `ocean_tide.ini`) to include for each tidal component the absolute path to the corresponding .nc file (use find and replace to do this). It should look like this:
 <img src="ini_file.JPG" alt="" width="80%"/>
 
-6. Open the Anaconda prompt and activate your environment, then run: `conda install -c fbriol fes`
+6. Open the Anaconda prompt and activate your environment, then run: `conda install pyfes -c fbriol`
 
 7. To test if the installation was successful, type `python` and then `import pyfes`
